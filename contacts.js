@@ -4,41 +4,60 @@ const shortid = require("shortid");
 
 const contactsPath = path.resolve(__dirname, "db", "contacts.json");
 
-function listContacts() {
-  fs.readFile(contactsPath)
-    .then((data) => console.table(JSON.parse(data)))
-    .catch((err) => console.log("Can't get contacts list: ", err));
+async function listContacts() {
+  try {
+    const contacts = await fs.readFile(contactsPath);
+    return JSON.parse(contacts);
+  } catch (err) {
+    console.log("Can't get contacts list: ", err);
+  }
 }
 
-function getContactById(contactId) {
-  fs.readFile(contactsPath)
-    .then((data) =>
-      console.log(JSON.parse(data).find((contact) => contact.id === contactId))
-    )
-    .catch((err) => console.log("Can't get a contact: ", err));
+async function getContactById(contactId) {
+  try {
+    const contacts = await listContacts();
+    return contacts.find((contact) => contact.id === contactId);
+  } catch (err) {
+    console.log("Can't get a contact: ", err);
+  }
 }
 
-function removeContact(contactId) {
-  fs.readFile(contactsPath)
-    .then((data) => {
-      const filteredContacts = JSON.parse(data).filter(
-        (contact) => contact.id !== contactId
-      );
-      console.table(filteredContacts);
-      fs.writeFile(contactsPath, JSON.stringify(filteredContacts));
-    })
-    .catch((err) => console.log("Can't delete a contact: ", err));
+async function removeContact(contactId) {
+  try {
+    const contacts = await listContacts();
+    const filteredContacts = contacts.filter(
+      (contact) => contact.id !== contactId
+    );
+    await fs.writeFile(contactsPath, JSON.stringify(filteredContacts));
+    return filteredContacts;
+  } catch (err) {
+    console.log("Can't delete a contact: ", err);
+  }
 }
 
-function addContact(name, email, phone) {
-  fs.readFile(contactsPath)
-    .then((data) => {
-      const newContact = { id: shortid.generate(), name, email, phone };
-      const updatedContacts = [...JSON.parse(data), newContact];
-      console.table(updatedContacts);
-      fs.writeFile(contactsPath, JSON.stringify(updatedContacts));
-    })
-    .catch((err) => console.log("Can't add a contact: ", err));
+async function addContact({ name, email, phone }) {
+  try {
+    const contacts = await listContacts();
+    const newContact = { id: shortid.generate(), name, email, phone };
+    const updatedContacts = [...contacts, newContact];
+    await fs.writeFile(contactsPath, JSON.stringify(updatedContacts));
+    return newContact;
+  } catch (err) {
+    console.log("Can't add a contact: ", err);
+  }
+}
+
+async function updateContact(contactId, contactData) {
+  try {
+    const contacts = await listContacts();
+    const updatedData = contacts.map((contact) =>
+      contact.id === contactId ? { ...contact, ...contactData } : contact
+    );
+    await fs.writeFile(contactsPath, JSON.stringify(updatedData));
+    return updatedData.find((contact) => contact.id === contactId);
+  } catch (err) {
+    console.log("Can't update a contact: ", err);
+  }
 }
 
 module.exports = {
@@ -46,4 +65,5 @@ module.exports = {
   getContactById,
   removeContact,
   addContact,
+  updateContact,
 };
