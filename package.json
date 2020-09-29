@@ -1,7 +1,7 @@
 {
-  "name": "02-express",
+  "name": "03-mongodb",
   "version": "1.0.0",
-  "description": "homework-02-express",
+  "description": "homework-03-mongodb",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,8 +15,9 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "joi": "^17.2.1",
+    "mongoose": "^5.10.7",
     "morgan": "^1.10.0",
     "shortid": "^2.2.15"
   }
