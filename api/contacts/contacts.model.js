@@ -26,9 +26,7 @@ const contactSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    token: {
-      type: String,
-    },
+    token: String,
   },
   { versionKey: false }
 );
