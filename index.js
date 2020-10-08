@@ -5,7 +5,9 @@ const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
+const authRouter = require("./api/auth/auth.router");
 const contactsRouter = require("./api/contacts/router");
+const usersRouter = require("./api/users/users.router");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -24,7 +26,9 @@ const runServer = async () => {
 
     app.use(express.json());
 
+    app.use("/api/auth", authRouter);
     app.use("/api/contacts", contactsRouter);
+    app.use("/api/users", usersRouter);
 
     app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
   } catch (e) {
