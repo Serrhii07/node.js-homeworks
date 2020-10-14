@@ -4,6 +4,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const path = require("path");
 
 const authRouter = require("./api/auth/auth.router");
 const contactsRouter = require("./api/contacts/router");
@@ -11,6 +12,8 @@ const usersRouter = require("./api/users/users.router");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
+
+app.use(express.static(path.resolve(__dirname, "public")));
 
 const runServer = async () => {
   try {
