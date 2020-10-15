@@ -1,14 +1,15 @@
 const AvatarGenerator = require("avatar-generator");
+const { createPartsPath, createTmpPath } = require("../config");
 
 const createAvatar = async (userId) => {
   const avatar = new AvatarGenerator({
     parts: ["background", "face", "clothes", "head", "hair", "eye", "mouth"],
-    partsLocation: "node_modules/avatar-generator/img",
+    partsLocation: createPartsPath(),
     imageExtension: ".png",
   });
   const variant = "male";
   const image = await avatar.generate(userId, variant);
-  image.png().toFile(`./tmp/${userId}.png`);
+  image.png().toFile(createTmpPath(userId));
 };
 
 module.exports = {

@@ -1,5 +1,7 @@
 const UserDB = require("./users.model");
 
+const { createAvatarURL } = require("../../config");
+
 const getCurrentUserController = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
@@ -22,7 +24,7 @@ const uploadAvatarController = async (req, res, next) => {
   try {
     const { file } = req;
     const { id: userId } = req.user;
-    const avatarURL = `http://localhost:3000/images/${file.filename}`;
+    const avatarURL = createAvatarURL(file.filename.split(".")[0]);
     await UserDB.updateUser(userId, { avatarURL });
     res.send(avatarURL);
   } catch (e) {

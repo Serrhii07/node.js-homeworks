@@ -5,6 +5,7 @@ const User = require("../users/users.model");
 const { createVerificationToken } = require("../../services/token.service");
 const { createAvatar } = require("../../helpers/avatarCreator");
 const { minifyImage } = require("../../helpers/imageMinificator");
+const { createAvatarURL, createTmpPath } = require("../../config");
 
 const registerController = async (req, res, next) => {
   try {
@@ -21,10 +22,10 @@ const registerController = async (req, res, next) => {
 
     await minifyImage();
 
-    await fs.unlink(`tmp/${newUser._id}.png`);
+    await fs.unlink(createTmpPath(newUser._id));
 
     await User.updateUser(newUser._id, {
-      avatarURL: `http://localhost:3000/images/${newUser._id}.png`,
+      avatarURL: createAvatarURL(newUser._id),
     });
 
     res.status(201).json({

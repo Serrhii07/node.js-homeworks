@@ -2,9 +2,11 @@ const imagemin = require("imagemin");
 const imageminJpegtran = require("imagemin-jpegtran");
 const imageminPngquant = require("imagemin-pngquant");
 
+const { createImageminPath, createImageDestinationPath } = require("../config");
+
 const minifyImage = async () => {
-  const files = await imagemin(["tmp/*.{jpg,png}"], {
-    destination: "public/images",
+  const files = await imagemin(createImageminPath(), {
+    destination: createImageDestinationPath(),
     plugins: [
       imageminJpegtran(),
       imageminPngquant({
