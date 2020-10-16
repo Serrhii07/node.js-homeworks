@@ -24,7 +24,7 @@ const uploadAvatarController = async (req, res, next) => {
   try {
     const { file } = req;
     const { id: userId } = req.user;
-    const avatarURL = createAvatarURL(file.filename.split(".")[0]);
+    const avatarURL = createAvatarURL(file.filename);
     await UserDB.updateUser(userId, { avatarURL });
     res.send(avatarURL);
   } catch (e) {

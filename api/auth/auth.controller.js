@@ -1,11 +1,8 @@
 const bcrypt = require("bcrypt");
-const fs = require("fs").promises;
 
 const User = require("../users/users.model");
 const { createVerificationToken } = require("../../services/token.service");
 const { createAvatar } = require("../../helpers/avatarCreator");
-const { minifyImage } = require("../../helpers/imageMinificator");
-const { createAvatarURL, createTmpPath } = require("../../config");
 
 const registerController = async (req, res, next) => {
   try {
@@ -18,14 +15,11 @@ const registerController = async (req, res, next) => {
       ...body,
       password: hashedPassword,
     });
-    await createAvatar(newUser._id);
 
-    await minifyImage();
-
-    await fs.unlink(createTmpPath(newUser._id));
+    const avatarURL = await createAvatar(newUser._id);
 
     await User.updateUser(newUser._id, {
-      avatarURL: createAvatarURL(newUser._id),
+      avatarURL,
     });
 
     res.status(201).json({

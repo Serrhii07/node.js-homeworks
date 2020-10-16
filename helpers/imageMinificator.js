@@ -1,21 +1,22 @@
 const imagemin = require("imagemin");
-const imageminJpegtran = require("imagemin-jpegtran");
-const imageminPngquant = require("imagemin-pngquant");
+const fs = require("fs").promises;
 
+const { createAvatarURL } = require("../config");
 const { createImageminPath, createImageDestinationPath } = require("../config");
 
 const minifyImage = async () => {
-  const files = await imagemin(createImageminPath(), {
-    destination: createImageDestinationPath(),
-    plugins: [
-      imageminJpegtran(),
-      imageminPngquant({
-        quality: [0.6, 0.8],
-      }),
-    ],
-  });
+  try {
+    const files = await imagemin([createImageminPath()], {
+      destination: createImageDestinationPath(),
+    });
 
-  console.log(files);
+    await fs.unlink(files[0].sourcePath);
+
+    const avatar = files[0].destinationPath.split("\\")[2];
+    return createAvatarURL(avatar);
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = {
