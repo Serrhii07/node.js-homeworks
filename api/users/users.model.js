@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema(
       unique: true,
     },
     password: String,
+    avatarURL: String,
     subscription: {
       type: String,
       enum: ["free", "pro", "premium"],

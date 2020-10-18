@@ -1,5 +1,7 @@
 const UserDB = require("./users.model");
 
+const { createAvatarURL } = require("../../config");
+
 const getCurrentUserController = async (req, res, next) => {
   try {
     const { id: userId } = req.user;
@@ -18,4 +20,16 @@ const getCurrentUserController = async (req, res, next) => {
   }
 };
 
-module.exports = { getCurrentUserController };
+const uploadAvatarController = async (req, res, next) => {
+  try {
+    const { file } = req;
+    const { id: userId } = req.user;
+    const avatarURL = createAvatarURL(file.filename);
+    await UserDB.updateUser(userId, { avatarURL });
+    res.send(avatarURL);
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports = { getCurrentUserController, uploadAvatarController };

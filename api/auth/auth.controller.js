@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 
 const User = require("../users/users.model");
 const { createVerificationToken } = require("../../services/token.service");
+const { createAvatar } = require("../../helpers/avatarCreator");
 
 const registerController = async (req, res, next) => {
   try {
@@ -14,6 +15,13 @@ const registerController = async (req, res, next) => {
       ...body,
       password: hashedPassword,
     });
+
+    const avatarURL = await createAvatar(newUser._id);
+
+    await User.updateUser(newUser._id, {
+      avatarURL,
+    });
+
     res.status(201).json({
       user: {
         email: body.email,
