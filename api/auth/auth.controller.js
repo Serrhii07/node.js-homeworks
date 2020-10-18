@@ -1,7 +1,12 @@
 const bcrypt = require("bcrypt");
 
 const User = require("../users/users.model");
-const { createVerificationToken } = require("../../services/token.service");
+const {
+  createVerificationToken,
+  verifyEmailToken,
+} = require("../../services/token.service");
+const { createAvatar } = require("../../helpers/avatarCreator");
+const { verifyEmail } = require("../../services/mail.service");
 
 const registerController = async (req, res, next) => {
   try {
@@ -14,6 +19,14 @@ const registerController = async (req, res, next) => {
       ...body,
       password: hashedPassword,
     });
+
+    await verifyEmail(body.email);
+
+    const avatarURL = await createAvatar(newUser._id);
+    await User.updateUser(newUser._id, {
+      avatarURL,
+    });
+
     res.status(201).json({
       user: {
         email: body.email,
@@ -28,6 +41,24 @@ const registerController = async (req, res, next) => {
   }
 };
 
+const verifyController = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { email } = await verifyEmailToken(token);
+    const user = await User.findUser({ email });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    if (user.isActive) {
+      return res.status(404).send("User not found");
+    }
+    await User.updateUser(user._id, { isActive: true });
+    res.redirect("http://localhost:3000");
+  } catch (err) {
+    next(err);
+  }
+};
+
 const loginController = async (req, res, next) => {
   try {
     const {
@@ -38,7 +69,9 @@ const loginController = async (req, res, next) => {
     if (!user) {
       return res.status(401).send("Email or password is wrong");
     }
-
+    if (!user.isActive) {
+      return res.status(401).send("Please verify your email");
+    }
     const isPasswordsEqual = await bcrypt.compare(password, user.password);
     if (!isPasswordsEqual)
       return res.status(401).send("Email or password is wrong");
@@ -82,4 +115,9 @@ const logoutController = async (req, res, next) => {
   }
 };
 
-module.exports = { registerController, loginController, logoutController };
+module.exports = {
+  registerController,
+  verifyController,
+  loginController,
+  logoutController,
+};

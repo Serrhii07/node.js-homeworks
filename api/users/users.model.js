@@ -7,12 +7,18 @@ const userSchema = mongoose.Schema(
       unique: true,
     },
     password: String,
+    avatarURL: String,
     subscription: {
       type: String,
       enum: ["free", "pro", "premium"],
       default: "free",
     },
     token: String,
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { versionKey: false }
 );
