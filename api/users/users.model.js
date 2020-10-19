@@ -14,6 +14,11 @@ const userSchema = mongoose.Schema(
       default: "free",
     },
     token: String,
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { versionKey: false }
 );

@@ -10,4 +10,17 @@ const verifyToken = async (token) => {
   return await jwt.verify(parsedToken, process.env.ACCESS_KEY);
 };
 
-module.exports = { createVerificationToken, verifyToken };
+const createEmailToken = (email) => {
+  return jwt.sign({ email }, process.env.EMAIL_TOKEN_KEY);
+};
+
+const verifyEmailToken = (token) => {
+  return jwt.verify(token, process.env.EMAIL_TOKEN_KEY);
+};
+
+module.exports = {
+  createVerificationToken,
+  verifyToken,
+  createEmailToken,
+  verifyEmailToken,
+};

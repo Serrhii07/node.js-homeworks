@@ -2,6 +2,7 @@ const { Router } = require("express");
 
 const {
   registerController,
+  verifyController,
   loginController,
   logoutController,
 } = require("./auth.controller");
@@ -19,5 +20,7 @@ authRouter.post("/register", validatorMiddleware, registerController);
 authRouter.post("/login", validatorMiddleware, loginController);
 
 authRouter.post("/logout", checkAuthTokenMiddleware, logoutController);
+
+authRouter.get("/verify/:token", verifyController);
 
 module.exports = authRouter;
